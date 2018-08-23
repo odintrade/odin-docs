@@ -2,33 +2,23 @@
 
 This documentation provides complete information about the API endpoints which can be used for interacting with OdinTrade's offchain orderbook.
 
-## WebSocket API
-
 The WebSocket API is available at: https://socket.odin.trade
 
-### Get exchange address
+## Events
 
-```
-getExchangeAddress
-```
+### funds
 
-Return the current address of the exchange contract, necessary for creating and signing orders or withdraw requests.
+Emitted when there are changes in user.balances, similar in structure to user.balances.
 
-**Sample request:**
+### orders
 
-```javascript
-socket.emit("getExchangeAddress");
-```
+Emitted when an order is created or removed, similar in structure to market.orders.
 
-**Sample response:**
+### trades
 
-```
-{
-	exchangeAddress: "0x51d76762717365d3f9e90c3c402d20e9f767224a"
-}
-```
+Emitted when a trade happens, similar in structure to market.trades.
 
-### Get all available markets
+## Get all available markets
 
 ```
 getMarkets
@@ -60,7 +50,7 @@ socket.emit("getMarkets");
 ];
 ```
 
-### Get data of a specific market
+## Get data of a specific market
 
 ```
 getMarket { symbol, user (address | optional) }
@@ -142,31 +132,54 @@ socket.emit("getMarket", { symbol, user });
 }
 ```
 
-## Events
-
-### funds
-
-Emitted when there are changes in user.balances, similar in structure to user.balances.
-
-### orders
-
-Emitted when an order is created or removed, similar in structure to market.orders.
-
-### trades
-
-Emitted when a trade happens, similar in structure to market.trades.
-
-## Place a limit order
+## Withdraw
 
 ```
-placeOrder { exchangeAddress, maker, giveToken, giveAmount, takeToken, takeAmount, nonce, expiry, v, r, s }
+withdraw { tokenAddress, amount, account, nonce, v, r, s }
+```
+
+Submit a withdraw request.
+
+**Parameters:**
+
+- `tokenAddress`: the address of the token to be withdrawn
+- `amount`: the amount to be withdrawn
+- `account`: the address of the account to withdraw from
+- `nonce`: current timestamp
+- `v, r, s`: the keccak256 result of the above, signed by `account`
+
+**Example of obtaining the v, r, s for a withdraw message:**
+
+```javascript
+const msg = Web3Utils.soliditySha3(tokenAddress, amount, account, nonce);
+const signedMsg = web3.eth.sign(account, msg);
+const { v, r, s } = eutil.fromRpcSig(signedMsg);
+```
+
+**Sample request:**
+
+```javascript
+socket.emit("withdraw", {
+	tokenAddress,
+	amount,
+	account,
+	nonce,
+	v,
+	r,
+	s
+});
+```
+
+## Placing limit orders
+
+```
+order { maker, giveToken, giveAmount, takeToken, takeAmount, nonce, expiry, v, r, s }
 ```
 
 Submit an order to the orderbook.
 
 **Parameters:**
 
-- `exchangeAddress`: the address of the exchange, can be obtained by calling getExchangeAddress
 - `maker`: the address of the account creating the order
 - `giveToken`: the address of the token to trade away
 - `takeToken`: the address of the token to receive
@@ -180,7 +193,6 @@ Submit an order to the orderbook.
 
 ```javascript
 const order = Web3Utils.soliditySha3(
-	exchangeAddress,
 	maker,
 	giveToken,
 	giveAmount,
@@ -196,8 +208,7 @@ const { v, r, s } = eutil.fromRpcSig(signedOrder);
 **Sample request:**
 
 ```javascript
-socket.emit("placeOrder", {
-	exchangeAddress,
+socket.emit("order", {
 	maker,
 	giveToken,
 	giveAmount,
@@ -214,14 +225,13 @@ socket.emit("placeOrder", {
 ## Trade
 
 ```
-trade [{ exchangeAddress, orderHash, taker, amount, nonce, v, r, s }]
+trade [{ orderHash, taker, amount, nonce, v, r, s }]
 ```
 
 Trade or "fill" an order or mutiple orders, this event is emitted with an array, each object in the array represents a trade and has to be signed individually. This operation is atomic, meaning when the array contains multiple trades, all is completed or none is completed.
 
 **Parameters:**
 
-- `exchangeAddress`: the address of the exchange, can be obtained by calling getExchangeAddress
 - `orderHash`: the hash of the order to fill
 - `taker`: the address of the account making the trade
 - `amount`: the amount to be traded
@@ -231,13 +241,7 @@ Trade or "fill" an order or mutiple orders, this event is emitted with an array,
 **Example of obtaining the v, r, s:**
 
 ```javascript
-const trade = Web3Utils.soliditySha3(
-	exchangeAddress,
-	orderHash,
-	taker,
-	amount,
-	takerNonce
-);
+const trade = Web3Utils.soliditySha3(orderHash, taker, amount, takerNonce);
 const signedTrade = web3.eth.sign(taker, trade);
 const { v, r, s } = eutil.fromRpcSig(signedTrade);
 ```
@@ -246,7 +250,6 @@ const { v, r, s } = eutil.fromRpcSig(signedTrade);
 
 ```javascript
 socket.emit("trade", {
-	exchangeAddress,
 	orderHash,
 	taker,
 	amount,
@@ -257,44 +260,34 @@ socket.emit("trade", {
 });
 ```
 
-## Withdraw
+## Cancelling orders
 
 ```
-withdraw { exchangeAddress, tokenAddress, amount, account, nonce, v, r, s }
+cancel { orderHash, account, nonce, v, r, s }
 ```
 
-Submit a withdraw request.
+Cancel an order.
 
 **Parameters:**
 
-- `exchangeAddress`: the address of the exchange, can be obtained by calling getExchangeAddress
-- `tokenAddress`: the address of the token to be withdrawn
-- `amount`: the amount to be withdrawn
-- `account`: the address of the account to withdraw from
+- `orderHash`: the hash of the order to fill
+- `account`: the address of the account owns the order
 - `nonce`: current timestamp
-- `v, r, s`: the keccak256 result of the above, signed by `account`
+- `v, r, s`: the keccak256 result of `orderHash` and `nonce`, signed by `account`
 
-**Example of obtaining the v, r, s for a withdraw message:**
+**Example of obtaining the v, r, s:**
 
 ```javascript
-const msg = Web3Utils.soliditySha3(
-	exchangeAddress,
-	tokenAddress,
-	amount,
-	account,
-	nonce
-);
-const signedMsg = web3.eth.sign(account, msg);
-const { v, r, s } = eutil.fromRpcSig(signedMsg);
+const cancelMsg = Web3Utils.soliditySha3(orderHash, nonce);
+const signedCancelMsg = web3.eth.sign(account, cancelMsg);
+const { v, r, s } = eutil.fromRpcSig(signedCancelMsg);
 ```
 
 **Sample request:**
 
 ```javascript
-socket.emit("withdraw", {
-	exchangeAddress,
-	tokenAddress,
-	amount,
+socket.emit("cancel", {
+	orderHash,
 	account,
 	nonce,
 	v,
