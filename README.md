@@ -166,17 +166,15 @@ Submit an order to the orderbook.
 
 **Parameters:**
 
-```
-* `exchangeAddress`: the address of the exchange, can be obtained by calling getExchangeAddress
-* `maker`: the address of the account creating the order
-* `giveToken`: the address of the token to trade away
-* `takeToken`: the address of the token to receive
-* `giveAmount`: the amount to trade away
-* `takeAmount`: the amount to receive
-* `nonce`: current timestamp
-* `expiry`: expiry time in blocks
-* `v, r, s`: the keccak256 result of the above, signed by `maker`
-```
+- `exchangeAddress`: the address of the exchange, can be obtained by calling getExchangeAddress
+- `maker`: the address of the account creating the order
+- `giveToken`: the address of the token to trade away
+- `takeToken`: the address of the token to receive
+- `giveAmount`: the amount to trade away
+- `takeAmount`: the amount to receive
+- `nonce`: current timestamp
+- `expiry`: expiry time in blocks
+- `v, r, s`: the keccak256 result of the above, signed by `maker`
 
 **Example of obtaining the v, r, s for an order:**
 
@@ -223,14 +221,12 @@ Trade or "fill" an order or mutiple orders, this event is emitted with an array,
 
 **Parameters:**
 
-```
-* `exchangeAddress`: the address of the exchange, can be obtained by calling getExchangeAddress
-* `orderHash`: the hash of the order to fill
-* `taker`: the address of the account making the trade
-* `amount`: the amount to be traded
-* `nonce`: current timestamp
-* `v, r, s`: the keccak256 result of the above, signed by `taker`
-```
+- `exchangeAddress`: the address of the exchange, can be obtained by calling getExchangeAddress
+- `orderHash`: the hash of the order to fill
+- `taker`: the address of the account making the trade
+- `amount`: the amount to be traded
+- `nonce`: current timestamp
+- `v, r, s`: the keccak256 result of the above, signed by `taker`
 
 **Example of obtaining the v, r, s:**
 
@@ -271,14 +267,12 @@ Submit a withdraw request.
 
 **Parameters:**
 
-```
-* `exchangeAddress`: the address of the exchange, can be obtained by calling getExchangeAddress
-* `tokenAddress`: the address of the token to be withdrawn
-* `amount`: the amount to be withdrawn
-* `account`: the address of the account to withdraw from
-* `nonce`: current timestamp
-* `v, r, s`: the keccak256 result of the above, signed by `account`
-```
+- `exchangeAddress`: the address of the exchange, can be obtained by calling getExchangeAddress
+- `tokenAddress`: the address of the token to be withdrawn
+- `amount`: the amount to be withdrawn
+- `account`: the address of the account to withdraw from
+- `nonce`: current timestamp
+- `v, r, s`: the keccak256 result of the above, signed by `account`
 
 **Example of obtaining the v, r, s for a withdraw message:**
 
