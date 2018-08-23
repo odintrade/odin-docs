@@ -95,7 +95,8 @@ socket.emit("getMarket", { symbol, user });
 						amount: 39990.184,
 						total: 0.94791529,
 						timestamp: 1534949733008,
-						sell: true
+						sell: true,
+						hash: "0xa6fd3f8fd7331b2b41d47d60a93f5a11e3b94a0974a58f17b56a66861ff5d770"
 					},
 					...
 				],
@@ -108,7 +109,8 @@ socket.emit("getMarket", { symbol, user });
 						amount: 39990.184,
 						total: 0.94791529,
 						timestamp: 1534949733008,
-						sell: true
+						sell: true,
+						hash: "0xa6fd3f8fd7331b2b41d47d60a93f5a11e3b94a0974a58f17b56a66861ff5d770"
 					},
 					...
 				],
@@ -223,26 +225,11 @@ Trade or "fill" an order or mutiple orders, this event is emitted with an array,
 
 ```
 * `exchangeAddress`: the address of the exchange, can be obtained by calling getExchangeAddress
-* `orderHash`: the keccak256 result of the order to be filled
+* `orderHash`: the hash of the order to fill
 * `taker`: the address of the account making the trade
 * `amount`: the amount to be traded
 * `nonce`: current timestamp
 * `v, r, s`: the keccak256 result of the above, signed by `taker`
-```
-
-**Example of obtaining the order hash:**
-
-```javascript
-const orderHash = Web3Utils.soliditySha3(
-	order.exchangeAddress,
-	order.maker,
-	order.giveToken,
-	order.giveAmount,
-	order.takeToken,
-	order.takeAmount,
-	order.makerNonce,
-	order.expiry
-);
 ```
 
 **Example of obtaining the v, r, s:**
@@ -264,9 +251,9 @@ const { v, r, s } = eutil.fromRpcSig(signedTrade);
 ```javascript
 socket.emit("trade", {
 	exchangeAddress,
-	tokenAddress,
+	orderHash,
+	taker,
 	amount,
-	account,
 	nonce,
 	v,
 	r,
