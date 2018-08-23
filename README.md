@@ -162,7 +162,7 @@ Emitted when a trade happens, similar in structure to market.trades.
 placeOrder { exchangeAddress, maker, giveToken, giveAmount, takeToken, takeAmount, nonce, expiry, v, r, s }
 ```
 
-Sumit an order to the orderbook.
+Submit an order to the orderbook.
 
 **Parameters:**
 
