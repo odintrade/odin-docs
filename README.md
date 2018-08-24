@@ -30,6 +30,9 @@ Return all available markets and their current prices
 
 ```javascript
 socket.emit("getMarkets");
+socket.on("markets", m => {
+	console.log(m);
+});
 ```
 
 **Sample response:**
@@ -62,6 +65,9 @@ Return market information and user data related to the market
 
 ```javascript
 socket.emit("getMarket", { symbol, user });
+socket.on("market", m => {
+	console.log(m);
+});
 ```
 
 **Sample response:**
