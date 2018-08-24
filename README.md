@@ -75,7 +75,7 @@ socket.on("market", m => {
 ```javascript
 {
 	market: {
-		name: "ETH_REM",
+		pair: "ETH_REM",
 		high: 0.000024909999983821,
 		low: 0.000022576272324766,
 		ask: 0.000023399999999977,
