@@ -6,9 +6,9 @@ The WebSocket API is available at: https://socket.odin.trade
 
 ## Events
 
-### funds
+### transactions
 
-Emitted when there are changes in user.balances, similar in structure to user.balances.
+Emitted when there are new deposits/ withdrawals, similar in structure to market.transactions.
 
 ### orders
 
@@ -123,17 +123,30 @@ socket.on("market", m => {
 				sell: true
 			},
 			...
+		],
+		transactions: [
+		  {
+		  	txHash: '0x295f173773f31c852a9c3eef252f8600620147c6aabb312276f8b0d9800cbc7a',
+	      date: '1535302714362',
+	      token: '0x0000000000000000000000000000000000000000',
+	      kind: 'Deposit',
+	      user: '0xcdb1978195f0f6694d0fc4c5770660f12aad65c3',
+	      amount: '0.001',
+	      balance: '0.005688612160935313'
+	    },
+		  ...
 		]
 	},
 	user: {
-		balances: {
-			baseTotal: 0.18946627,
-			baseAvailable: 0.09221427,
-			baseReserve: 0.097252,
-			tokenTotal: 21000,
-			tokenAvailable: 15000,
-			tokenReserve: 6000,
-		}
+		balances: [
+			{
+				token: '0x0000000000000000000000000000000000000000',
+				total: 0.18946627,
+				available: 0.09221427,
+				reserve: 0.097252,
+			}
+			...
+		]
 	}
 }
 ```
