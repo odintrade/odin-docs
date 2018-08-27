@@ -56,7 +56,7 @@ socket.on("markets", m => {
 ## Get data of a specific market
 
 ```
-getMarket { symbol, user (address | optional) }
+getMarket { symbol }
 ```
 
 Return market information and user data related to the market
@@ -64,7 +64,7 @@ Return market information and user data related to the market
 **Sample request:**
 
 ```javascript
-socket.emit("getMarket", { symbol, user });
+socket.emit("getMarket", { symbol });
 socket.on("market", m => {
 	console.log(m);
 });
@@ -136,19 +136,38 @@ socket.on("market", m => {
 	    },
 		  ...
 		]
-	},
-	user: {
-		balances: [
-			{
-				token: '0x0000000000000000000000000000000000000000',
-				total: 0.18946627,
-				available: 0.09221427,
-				reserve: 0.097252,
-			}
-			...
-		]
 	}
 }
+```
+
+## Fetch user balance
+
+```
+getBalance { userAddress }
+```
+
+Return an array in which each element contains the balance information of a token.
+
+**Sample request:**
+
+```javascript
+socket.emit("getBalance", { userAddress });
+socket.on("balance", m => {
+	console.log(m);
+});
+
+**Sample reponse:**
+
+```javascript
+[
+	{
+		token: '0x0000000000000000000000000000000000000000',
+		total: 0.18946627,
+		available: 0.09221427,
+		reserve: 0.097252,
+	}
+	...
+]
 ```
 
 ## Withdraw
