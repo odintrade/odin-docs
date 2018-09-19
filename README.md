@@ -21,16 +21,16 @@ Emitted when a trade happens, similar in structure to market.trades.
 ## Get all available markets
 
 ```
-getMarkets
+getAssets
 ```
 
-Return all available markets and their current prices
+Return all available assets
 
 **Sample request:**
 
 ```javascript
-socket.emit("getMarkets");
-socket.on("markets", m => {
+socket.emit("getAssets");
+socket.on("assets", m => {
 	console.log(m);
 });
 ```
@@ -38,19 +38,19 @@ socket.on("markets", m => {
 **Sample response:**
 
 ```javascript
-[
-	{
-		symbol: "ETH_REM",
-		bid: 0.00002392,
-		ask: 0.00002412
+{
+	MKR: {
+		symbol: "ETH_MKR",
+		name: "Maker",
+		address: "0x76a86b8172886DE0810E61A75aa55EE74a26e76f"
 	}
-	{
-		symbol: "ETH_DELTA",
-		bid: 0.00000025,
-		ask: 0.00000028
+	BNB: {
+		symbol: "BNB",
+		name: "Binance",
+		address: "0xA39071f60fa2eC4b03749dBA262dCA7f68a43D1B"
 	},
 	...
-];
+};
 ```
 
 ## Get data of a specific market
