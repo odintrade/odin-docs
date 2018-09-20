@@ -59,14 +59,14 @@ socket.on("assets", m => {
 getMarket { symbol }
 ```
 
-Return market information and user data related to the market
+Return information of a specific market
 
 **Sample request:**
 
 ```javascript
-socket.emit("getMarket", { symbol });
-socket.on("market", m => {
-	console.log(m);
+socket.emit("getMarket", { symbol: "MKR" });
+socket.on("MKR", data => {
+	console.log(data);
 });
 ```
 
@@ -75,67 +75,45 @@ socket.on("market", m => {
 ```javascript
 {
 	market: {
-		pair: "ETH_REM",
-		high: 0.000024909999983821,
-		low: 0.000022576272324766,
-		ask: 0.000023399999999977,
-		bid: 0.00002276,
-		percentChange: -6.47382142,
-		volume: 357.803939065858605263,
-		orders: {
-			sell: {
-				[
-					{
-						maker: "0x8a37b79e54d69e833d79cac3647c877ef72830e1",
-						price: 0.00002321,
-						amount: 39990.184,
-						total: 0.94791529,
-						timestamp: 1534949733008,
-						sell: true,
-						hash: "0xa6fd3f8fd7331b2b41d47d60a93f5a11e3b94a0974a58f17b56a66861ff5d770"
-					},
-					...
-				],
-			},
-			buy: {
-				[
-					{
-						maker: "0x8a37b79e54d69e833d79cac3647c877ef72830e1",
-						price: 0.00002321,
-						amount: 39990.184,
-						total: 0.94791529,
-						timestamp: 1534949733008,
-						sell: true,
-						hash: "0xa6fd3f8fd7331b2b41d47d60a93f5a11e3b94a0974a58f17b56a66861ff5d770"
-					},
-					...
-				],
-			}
-		}
-		trades: [
+		symbol: "MKR",
+		name: "Maker",
+		address: "0x76a86b8172886DE0810E61A75aa55EE74a26e76f",
+		sellOrders: [
 			{
-				buyer: "0x8a37b79e54d69e833d79cac3647c877ef72830e1",
-				seller: "0x4e30dba9762aba125f5ab81647edebff9f9df7a7",
-				price: 0.00002321,
-				amount: 39990.184,
-				total: 0.94791529,
-				timestamp: 1534949733008,
-				sell: true
+				user: "0x41088A3d46884444705d7603B9Ef47fD67C3541E",
+				amount: 3000000000000000,
+				price: 1400000000000000000,
+				next: 45,
+				prev: 40,
+				sell: true,
+				id: 30
 			},
 			...
 		],
-		transactions: [
-		  {
-		  	txHash: '0x295f173773f31c852a9c3eef252f8600620147c6aabb312276f8b0d9800cbc7a',
-	      date: '1535302714362',
-	      token: '0x0000000000000000000000000000000000000000',
-	      kind: 'Deposit',
-	      user: '0xcdb1978195f0f6694d0fc4c5770660f12aad65c3',
-	      amount: '0.001',
-	      balance: '0.005688612160935313'
+		buyOrders: [
+			{
+				user: "0x41088A3d46884444705d7603B9Ef47fD67C3541E",
+				amount: 3000000000000000,
+				price: 1400000000000000000,
+				next: 45,
+				prev: 40,
+				sell: false,
+				id: 30
+			},
+			...
+		],
+		trades: [
+			{
+		  	token: 0x76a86b8172886DE0810E61A75aa55EE74a26e76f
+		  	bid: 46
+		  	ask: 30
+		  	price: 1400000000000000000
+		  	amount: 1000000000000000
+		  	timestamp: 1537436883
+		  	sell: true
 	    },
-		  ...
-		]
+			...
+		],
 	}
 }
 ```
