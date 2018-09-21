@@ -18,6 +18,10 @@ Emitted when an order is created or removed, similar in structure to market.orde
 
 Emitted when a trade happens, similar in structure to market.trades.
 
+### ticks
+
+Emitted when a new tick is recorded with an empty payload to notify the clients to reload the datafeed.
+
 ## Get all available markets
 
 ```
