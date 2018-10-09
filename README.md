@@ -6,17 +6,13 @@ The WebSocket API is available at: https://socket.odin.trade
 
 ## Events
 
-### transactions
-
-Emitted when there are new deposits/ withdrawals, similar in structure to market.transactions.
-
 ### orders
 
-Emitted when an order is created or removed, similar in structure to market.orders.
+Emitted when an order is created or removed, similar in structure to market.orders
 
 ### trades
 
-Emitted when a trade happens, similar in structure to market.trades.
+Emitted when a trade happens, similar in structure to market.trades
 
 ### ticks
 
@@ -25,17 +21,17 @@ Emitted when a new tick is recorded with an empty payload to notify the clients 
 ## Get all available markets
 
 ```
-getAssets
+getMarkets
 ```
 
-Return all available assets
+Return all available markets
 
 **Sample request:**
 
 ```javascript
-socket.emit("getAssets");
-socket.on("assets", m => {
-	console.log(m);
+socket.emit("getMarkets");
+socket.on("markets", res => {
+	console.log(res);
 });
 ```
 
@@ -69,8 +65,8 @@ Return information of a specific market
 
 ```javascript
 socket.emit("getMarket", { symbol: "MKR" });
-socket.on("MKR", data => {
-	console.log(data);
+socket.on("MKR", res => {
+	console.log(res);
 });
 ```
 
@@ -82,7 +78,7 @@ socket.on("MKR", data => {
 		symbol: "MKR",
 		name: "Maker",
 		address: "0x76a86b8172886DE0810E61A75aa55EE74a26e76f",
-		sellOrders: [
+		orders: [
 			{
 				user: "0x41088A3d46884444705d7603B9Ef47fD67C3541E",
 				amount: 3000000000000000,
@@ -92,9 +88,6 @@ socket.on("MKR", data => {
 				sell: true,
 				id: 30
 			},
-			...
-		],
-		buyOrders: [
 			{
 				user: "0x41088A3d46884444705d7603B9Ef47fD67C3541E",
 				amount: 3000000000000000,
@@ -125,7 +118,7 @@ socket.on("MKR", data => {
 ## Fetch user balance
 
 ```
-getBalance { userAddress }
+getBalances { userAddress }
 ```
 
 Return an array in which each element contains the balance information of a token.
@@ -133,9 +126,9 @@ Return an array in which each element contains the balance information of a toke
 **Sample request:**
 
 ```javascript
-socket.emit("getBalance", { userAddress });
-socket.on("balance", m => {
-	console.log(m);
+socket.emit("getBalances", { userAddress });
+socket.on("balance", res => {
+	console.log(res);
 });
 
 **Sample reponse:**
@@ -143,10 +136,8 @@ socket.on("balance", m => {
 ```javascript
 [
 	{
-		token: '0x0000000000000000000000000000000000000000',
-		total: 0.18946627,
 		available: 0.09221427,
-		reserve: 0.097252,
+		reserve: 0.097252
 	}
 	...
 ]
@@ -165,8 +156,8 @@ Submit a withdraw request.
 - `tokenAddress`: the address of the token to be withdrawn
 - `amount`: the amount to be withdrawn
 - `account`: the address of the account to withdraw from
-- `nonce`: current timestamp
-- `v, r, s`: the keccak256 result of the above, signed by `account`
+- `nonce`: the current transaction count of `account`
+- `v, r, s`: the keccak256 result of all the above, signed by `account`
 
 **Example of obtaining the v, r, s for a withdraw message:**
 
@@ -205,7 +196,7 @@ Submit an order to the orderbook.
 - `takeToken`: the address of the token to receive
 - `giveAmount`: the amount to trade away
 - `takeAmount`: the amount to receive
-- `nonce`: current timestamp
+- `nonce`: the current transaction count of `account`
 - `expiry`: expiry time in blocks
 - `v, r, s`: the keccak256 result of the above, signed by `maker`
 
@@ -242,44 +233,6 @@ socket.emit("order", {
 });
 ```
 
-## Trade
-
-```
-trade [{ orderHash, taker, amount, nonce, v, r, s }]
-```
-
-Trade or "fill" an order or mutiple orders, this event is emitted with an array, each object in the array represents a trade and has to be signed individually. This operation is atomic, meaning when the array contains multiple trades, all is completed or none is completed.
-
-**Parameters:**
-
-- `orderHash`: the hash of the order to fill
-- `taker`: the address of the account making the trade
-- `amount`: the amount to be traded
-- `nonce`: current timestamp
-- `v, r, s`: the keccak256 result of the above, signed by `taker`
-
-**Example of obtaining the v, r, s:**
-
-```javascript
-const trade = Web3Utils.soliditySha3(orderHash, taker, amount, takerNonce);
-const signedTrade = web3.eth.sign(taker, trade);
-const { v, r, s } = eutil.fromRpcSig(signedTrade);
-```
-
-**Sample request:**
-
-```javascript
-socket.emit("trade", {
-	orderHash,
-	taker,
-	amount,
-	nonce,
-	v,
-	r,
-	s
-});
-```
-
 ## Cancelling orders
 
 ```
@@ -290,9 +243,9 @@ Cancel an order.
 
 **Parameters:**
 
-- `orderHash`: the hash of the order to fill
-- `account`: the address of the account owns the order
-- `nonce`: current timestamp
+- `orderHash`: the hash of the order to cancel
+- `account`: the address of the order's owner
+- `nonce`: the current transaction count of `account`
 - `v, r, s`: the keccak256 result of `orderHash` and `nonce`, signed by `account`
 
 **Example of obtaining the v, r, s:**
