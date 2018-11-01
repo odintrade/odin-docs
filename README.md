@@ -115,33 +115,36 @@ socket.on("MKR", res => {
 }
 ```
 
-## Fetch user balance
+## Fetch user data
 
 ```
-getBalances { userAddress }
+getUser { address }
 ```
 
-Return an array in which each element contains the balance information of a token.
+Return an object contains the data of a given user.
 
 **Sample request:**
 
-```javascript
-socket.emit("getBalances", { userAddress });
-socket.on("balance", res => {
+````javascript
+socket.emit("getUser", { address });
+socket.on("user", res => {
 	console.log(res);
 });
 
 **Sample reponse:**
 
 ```javascript
-[
-	{
-		available: 0.09221427,
-		reserve: 0.097252
+{
+	"address": "0x76a86b8172886DE0810E61A75aa55EE74a26e76f",
+	"balances": {
+		"ODN": {
+			available: 0.09221427,
+			reserve: 0.097252
+		},
+		...
 	}
-	...
-]
-```
+}
+````
 
 ## Withdraw
 
