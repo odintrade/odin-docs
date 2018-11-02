@@ -136,7 +136,7 @@ socket.on("user", res => {
 ```javascript
 {
 	"address": "0x76a86b8172886DE0810E61A75aa55EE74a26e76f",
-	"balances": {
+	"wallets": {
 		"ODN": {
 			available: 0.09221427,
 			reserve: 0.097252
