@@ -18,6 +18,10 @@ Emitted when a trade happens, similar in structure to market.trades
 
 Emitted when a new tick is recorded with an empty payload to notify the clients to reload the datafeed.
 
+### user
+
+Emitted when user-related data changes, similar in structure to the result of getUser
+
 ## Get all available markets
 
 ```
