@@ -18,7 +18,7 @@ Emitted when a trade happens, similar in structure to market.trades
 
 Emitted when a new tick is recorded with an empty payload to notify the clients to reload the datafeed.
 
-### user
+### address
 
 Emitted when user-related data changes, similar in structure to the result of getUser
 
@@ -131,7 +131,7 @@ Return an object contains the data of a given user.
 
 ````javascript
 socket.emit("getUser", { address });
-socket.on("user", res => {
+socket.on("0x76a86b8172886DE0810E61A75aa55EE74a26e76f", res => {
 	console.log(res);
 });
 
@@ -139,7 +139,6 @@ socket.on("user", res => {
 
 ```javascript
 {
-	"address": "0x76a86b8172886DE0810E61A75aa55EE74a26e76f",
 	"wallets": {
 		"ODN": {
 			available: 0.09221427,
