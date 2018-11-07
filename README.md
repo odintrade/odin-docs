@@ -20,7 +20,7 @@ Emitted when a new tick is recorded with an empty payload to notify the clients 
 
 ### address
 
-Emitted when user-related data changes, similar in structure to the result of getUser
+Emitted when address-related data changes, similar in structure to the result of getUser
 
 ## Get all available markets
 
@@ -139,6 +139,7 @@ socket.on("0x76a86b8172886DE0810E61A75aa55EE74a26e76f", res => {
 
 ```javascript
 {
+	address: "0xA39071f60fa2eC4b03749dBA262dCA7f68a43D1B",
 	"wallets": {
 		"ODN": {
 			available: 0.09221427,
