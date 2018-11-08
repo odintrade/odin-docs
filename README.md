@@ -4,7 +4,7 @@ This documentation provides complete information about the API endpoints which c
 
 The WebSocket API is available at: https://socket.odin.trade
 
-## Events
+## Emitting events
 
 ### orders
 
@@ -18,11 +18,29 @@ Emitted when a trade happens, similar in structure to market.trades
 
 Emitted when a new tick is recorded with an empty payload to notify the clients to reload the datafeed.
 
-### user address
+### `userAddress`, eg: 0xA39071f6...
 
-Emitted when user data changes, for example when deposits are confirmed and the user's balance is credited, similar in structure to the result of getUser
+Emitted when there are new changes to a user, each message has a `type` attribute, denoting its content, possible types include `getUser`, `deposit`, `withdraw`, `withdrawalConfirmed`.
 
-## Get all available markets
+**Example:**
+
+```javascript
+{
+	user: {
+		address: "0xA39071f60fa2eC4b03749dBA262dCA7f68a43D1B",
+		"VINA": {
+			available: 0.09221427,
+			reserve: 0.097252
+		},
+		...
+	},
+	type: "getUser"
+}
+```
+
+## Listening events
+
+### Get all available markets
 
 ```
 getMarkets
@@ -57,7 +75,7 @@ socket.on("markets", res => {
 };
 ```
 
-## Get data of a specific market
+### Get data of a specific market
 
 ```
 getMarket { symbol }
@@ -119,7 +137,7 @@ socket.on("MKR", res => {
 }
 ```
 
-## Fetch user data
+### Fetch user data
 
 ```
 getUser { address }
@@ -141,7 +159,7 @@ socket.on("0x76a86b8172886DE0810E61A75aa55EE74a26e76f", res => {
 {
 	user: {
 		address: "0xA39071f60fa2eC4b03749dBA262dCA7f68a43D1B",
-		"ODN": {
+		"VINA": {
 			available: 0.09221427,
 			reserve: 0.097252
 		},
@@ -151,7 +169,7 @@ socket.on("0x76a86b8172886DE0810E61A75aa55EE74a26e76f", res => {
 }
 ````
 
-## Withdraw
+### Withdraw
 
 ```
 withdraw { tokenAddress, amount, account, nonce, v, r, s }
@@ -189,7 +207,7 @@ socket.emit("withdraw", {
 });
 ```
 
-## Placing limit orders
+### Placing limit orders
 
 ```
 order { maker, giveToken, giveAmount, takeToken, takeAmount, nonce, expiry, v, r, s }
@@ -241,7 +259,7 @@ socket.emit("order", {
 });
 ```
 
-## Cancelling orders
+### Cancelling orders
 
 ```
 cancel { orderHash, account, nonce, v, r, s }
