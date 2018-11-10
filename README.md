@@ -20,14 +20,14 @@ Emitted when a new tick is recorded with an empty payload to notify the clients 
 
 ### `userAddress`, eg: 0xA39071f6...
 
-Emitted when there are new changes to a user, each message has a `type` attribute, denoting its content, possible types include `getUser`, `deposit`, `withdraw`, `withdrawalConfirmed`.
+Emitted when there are new changes to a user, each message has a `type` attribute, denoting its content, possible types include `getUser`, `deposit`, `withdraw`, `withdrawalConfirmed`, `error`.
 
 **Example:**
 
 ```javascript
 {
 	user: {
-		address: "0xA39071f60fa2eC4b03749dBA262dCA7f68a43D1B",
+		address: "0x8a37b79E54D69e833d79Cac3647C877Ef72830E1",
 		"VINA": {
 			available: 0.09221427,
 			reserve: 0.097252
@@ -69,7 +69,7 @@ socket.on("markets", res => {
 	BNB: {
 		symbol: "BNB",
 		name: "Binance",
-		address: "0xA39071f60fa2eC4b03749dBA262dCA7f68a43D1B"
+		address: "0x8a37b79E54D69e833d79Cac3647C877Ef72830E1"
 	},
 	...
 };
@@ -158,7 +158,7 @@ socket.on("0x76a86b8172886DE0810E61A75aa55EE74a26e76f", res => {
 ```javascript
 {
 	user: {
-		address: "0xA39071f60fa2eC4b03749dBA262dCA7f68a43D1B",
+		address: "0x8a37b79E54D69e833d79Cac3647C877Ef72830E1",
 		"VINA": {
 			available: 0.09221427,
 			reserve: 0.097252
@@ -172,7 +172,7 @@ socket.on("0x76a86b8172886DE0810E61A75aa55EE74a26e76f", res => {
 ### Withdraw
 
 ```
-withdraw { tokenAddress, amount, account, nonce, v, r, s }
+withdraw { tokenAddress, amount, user, nonce, v, r, s }
 ```
 
 Submit a withdraw request.
@@ -181,16 +181,16 @@ Submit a withdraw request.
 
 - `tokenAddress`: the address of the token to be withdrawn
 - `amount`: the amount to be withdrawn
-- `account`: the address of the account to withdraw from
-- `nonce`: the current transaction count of `account`
-- `v, r, s`: the keccak256 result of all the above, signed by `account`
+- `user`: the address of the user to withdraw from
+- `nonce`: the current transaction count of `user`
+- `v, r, s`: the keccak256 result of all the above, signed by `user`
 
 **Example of obtaining the v, r, s for a withdraw message:**
 
 ```javascript
-const msg = Web3Utils.soliditySha3(tokenAddress, amount, account, nonce);
-const signedMsg = web3.eth.sign(account, msg);
-const { v, r, s } = eutil.fromRpcSig(signedMsg);
+const msg = web3.utils.soliditySha3(exchangeAddress, tokenAddress, amount, user, nonce);
+const sig = web3.eth.sign(user, msg);
+const { v, r, s } = eutil.fromRpcSig(sig);
 ```
 
 **Sample request:**
@@ -199,12 +199,31 @@ const { v, r, s } = eutil.fromRpcSig(signedMsg);
 socket.emit("withdraw", {
 	tokenAddress,
 	amount,
-	account,
+	user,
 	nonce,
 	v,
 	r,
 	s
 });
+socket.on("0x8a37b79E54D69e833d79Cac3647C877Ef72830E1", res => {
+	console.log(res)	
+})
+```
+
+**Sample response:**
+
+```javascript
+{
+	user: {
+		address: "0x8a37b79E54D69e833d79Cac3647C877Ef72830E1",
+		"VINA": {
+			available: 0.09221427,
+			reserve: 0.097252
+		},
+		...
+	},
+	type: "withdraw"
+}
 ```
 
 ### Placing limit orders
@@ -217,12 +236,12 @@ Submit an order to the orderbook.
 
 **Parameters:**
 
-- `maker`: the address of the account creating the order
+- `maker`: the address of the user creating the order
 - `giveToken`: the address of the token to trade away
 - `takeToken`: the address of the token to receive
 - `giveAmount`: the amount to trade away
 - `takeAmount`: the amount to receive
-- `nonce`: the current transaction count of `account`
+- `nonce`: the current transaction count of `user`
 - `expiry`: expiry time in blocks
 - `v, r, s`: the keccak256 result of the above, signed by `maker`
 
@@ -262,7 +281,7 @@ socket.emit("order", {
 ### Cancelling orders
 
 ```
-cancel { orderHash, account, nonce, v, r, s }
+cancel { orderHash, user, nonce, v, r, s }
 ```
 
 Cancel an order.
@@ -270,15 +289,15 @@ Cancel an order.
 **Parameters:**
 
 - `orderHash`: the hash of the order to cancel
-- `account`: the address of the order's owner
-- `nonce`: the current transaction count of `account`
-- `v, r, s`: the keccak256 result of `orderHash` and `nonce`, signed by `account`
+- `user`: the address of the order's owner
+- `nonce`: the current transaction count of `user`
+- `v, r, s`: the keccak256 result of `orderHash` and `nonce`, signed by `user`
 
 **Example of obtaining the v, r, s:**
 
 ```javascript
 const cancelMsg = Web3Utils.soliditySha3(orderHash, nonce);
-const signedCancelMsg = web3.eth.sign(account, cancelMsg);
+const signedCancelMsg = web3.eth.sign(user, cancelMsg);
 const { v, r, s } = eutil.fromRpcSig(signedCancelMsg);
 ```
 
@@ -287,7 +306,7 @@ const { v, r, s } = eutil.fromRpcSig(signedCancelMsg);
 ```javascript
 socket.emit("cancel", {
 	orderHash,
-	account,
+	user,
 	nonce,
 	v,
 	r,
