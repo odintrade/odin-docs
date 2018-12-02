@@ -22,17 +22,40 @@ Emitted when a new tick is recorded with an empty payload to notify the clients 
 
 Emitted when there are new changes to a user, each message has a `type` attribute, denoting its content, possible types include `getUser`, `deposit`, `withdraw`, `withdrawalConfirmed`, `error`.
 
-**Example:**
+**Example listener**
+
+```javascript
+socket.on("0x8a37b79E54D69e833d79Cac3647C877Ef72830E1", event => {
+	console.log(event);
+});
+```
+
+**Example event:**
 
 ```javascript
 {
 	user: {
+		id: 1,
 		address: "0x8a37b79E54D69e833d79Cac3647C877Ef72830E1",
-		"VINA": {
-			available: 0.09221427,
-			reserve: 0.097252
-		},
-		...
+		transfers: [
+			{
+				type: "deposit",
+				date: "2018-08-25 21:48:29",
+				asset: "VINA",
+				name: "VietTrade"
+				amount: "0.1",
+				status: "pending",
+				transactionHash: "0xb844692c9c29ae7d7cb246bacac84f8a435a402d2074a85c37bbf03af928f60f",
+				blockHash: "0x55d9972705ab92ed16dcbc5491e282df2456131a9404f4b812457c23cffb535c",
+				blockNumber: 371
+			},
+			...
+		]
+		wallets: {
+			"VINA": "0.12345678",
+			"BNB": 0.12345678
+			...
+		}
 	},
 	type: "getUser"
 }
@@ -182,7 +205,7 @@ Submit a withdraw request.
 - `tokenAddress`: the address of the token to be withdrawn
 - `amount`: the amount to be withdrawn
 - `user`: the address of the user to withdraw from
-- `nonce`: the current transaction count of `user`
+- `nonce`: the current timestamp in milliseconds
 - `v, r, s`: the keccak256 result of all the above, signed by `user`
 
 **Example of obtaining the v, r, s for a withdraw message:**
@@ -241,7 +264,7 @@ Submit an order to the orderbook.
 - `takeToken`: the address of the token to receive
 - `giveAmount`: the amount to trade away
 - `takeAmount`: the amount to receive
-- `nonce`: the current transaction count of `user`
+- `nonce`: the current timestamp in milliseconds
 - `expiry`: expiry time in blocks
 - `v, r, s`: the keccak256 result of the above, signed by `maker`
 
@@ -290,7 +313,7 @@ Cancel an order.
 
 - `orderHash`: the hash of the order to cancel
 - `user`: the address of the order's owner
-- `nonce`: the current transaction count of `user`
+- `nonce`: the current timestamp in milliseconds
 - `v, r, s`: the keccak256 result of `orderHash` and `nonce`, signed by `user`
 
 **Example of obtaining the v, r, s:**
