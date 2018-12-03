@@ -205,7 +205,7 @@ Submit a withdraw request.
 - `tokenAddress`: the address of the token to be withdrawn
 - `amount`: the amount to be withdrawn
 - `user`: the address of the user to withdraw from
-- `nonce`: the current timestamp in milliseconds
+- `nonce`: a random number
 - `v, r, s`: the keccak256 result of all the above, signed by `user`
 
 **Example of obtaining the v, r, s for a withdraw message:**
@@ -264,7 +264,7 @@ Submit an order to the orderbook.
 - `takeToken`: the address of the token to receive
 - `giveAmount`: the amount to trade away
 - `takeAmount`: the amount to receive
-- `nonce`: the current timestamp in milliseconds
+- `nonce`: a random number
 - `expiry`: expiry time in blocks
 - `v, r, s`: the keccak256 result of the above, signed by `maker`
 
@@ -313,7 +313,7 @@ Cancel an order.
 
 - `orderHash`: the hash of the order to cancel
 - `user`: the address of the order's owner
-- `nonce`: the current timestamp in milliseconds
+- `nonce`: a random number
 - `v, r, s`: the keccak256 result of `orderHash` and `nonce`, signed by `user`
 
 **Example of obtaining the v, r, s:**
