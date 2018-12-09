@@ -6,60 +6,17 @@ The WebSocket API is available at: https://socket.odin.trade
 
 ## Emitting events
 
-### orders
-
-Emitted when an order is created or removed, similar in structure to market.orders
-
-### trades
-
-Emitted when a trade happens, similar in structure to market.trades
-
 ### ticks
 
 Emitted when a new tick is recorded with an empty payload to notify the clients to reload the datafeed.
 
+### `marketSymbol`, eg: MKR, BNB...
+
+Emitted when a new market-related information becomes available, such as new orders or trades, response is similar to `getMarket`.
+
 ### `userAddress`, eg: 0xA39071f6...
 
-Emitted when there are new changes to a user, each message has a `type` attribute, denoting its content, possible types include `getUser`, `deposit`, `withdraw`, `withdrawalConfirmed`, `error`.
-
-**Example listener**
-
-```javascript
-socket.on("0x8a37b79E54D69e833d79Cac3647C877Ef72830E1", event => {
-	console.log(event);
-});
-```
-
-**Example event:**
-
-```javascript
-{
-	user: {
-		id: 1,
-		address: "0x8a37b79E54D69e833d79Cac3647C877Ef72830E1",
-		transfers: [
-			{
-				type: "deposit",
-				date: "2018-08-25 21:48:29",
-				asset: "VINA",
-				name: "VietTrade"
-				amount: "0.1",
-				status: "pending",
-				transactionHash: "0xb844692c9c29ae7d7cb246bacac84f8a435a402d2074a85c37bbf03af928f60f",
-				blockHash: "0x55d9972705ab92ed16dcbc5491e282df2456131a9404f4b812457c23cffb535c",
-				blockNumber: 371
-			},
-			...
-		]
-		wallets: {
-			"VINA": "0.12345678",
-			"BNB": 0.12345678
-			...
-		}
-	},
-	type: "getUser"
-}
-```
+Emitted when a new user-related information becomes available, such as new deposits or withdrawals, response is similar to `getUser`.
 
 ## Listening events
 
@@ -170,27 +127,43 @@ Return an object contains the data of a given user.
 
 **Sample request:**
 
-````javascript
+```javascript
 socket.emit("getUser", { address });
 socket.on("0x76a86b8172886DE0810E61A75aa55EE74a26e76f", res => {
 	console.log(res);
 });
+```
 
 **Sample reponse:**
 
 ```javascript
 {
 	user: {
+		id: 1,
 		address: "0x8a37b79E54D69e833d79Cac3647C877Ef72830E1",
-		"VINA": {
-			available: 0.09221427,
-			reserve: 0.097252
-		},
-		...
+		transfers: [
+			{
+				type: "deposit",
+				date: "2018-08-25 21:48:29",
+				asset: "VINA",
+				name: "VietTrade"
+				amount: "0.1",
+				status: "pending",
+				transactionHash: "0xb844692c9c29ae7d7cb246bacac84f8a435a402d2074a85c37bbf03af928f60f",
+				blockHash: "0x55d9972705ab92ed16dcbc5491e282df2456131a9404f4b812457c23cffb535c",
+				blockNumber: 371
+			},
+			...
+		]
+		wallets: {
+			"VINA": "0.12345678",
+			"BNB": 0.12345678
+			...
+		}
 	},
 	type: "getUser"
 }
-````
+```
 
 ### Withdraw
 
@@ -252,7 +225,7 @@ socket.on("0x8a37b79E54D69e833d79Cac3647C877Ef72830E1", res => {
 ### Placing limit orders
 
 ```
-order { maker, giveToken, giveAmount, takeToken, takeAmount, nonce, expiry, v, r, s }
+createOrder { maker, giveToken, giveAmount, takeToken, takeAmount, nonce, expiry, v, r, s }
 ```
 
 Submit an order to the orderbook.
@@ -304,7 +277,7 @@ socket.emit("order", {
 ### Cancelling orders
 
 ```
-cancel { orderHash, user, nonce, v, r, s }
+cancelOrder { orderHash, user, nonce, v, r, s }
 ```
 
 Cancel an order.
