@@ -232,7 +232,8 @@ Submit an order to the orderbook.
 
 **Parameters:**
 
-- `maker`: the address of the user creating the order
+- `exchangeAddress`: the address of the exchange's contract
+- `user`: the address of the user creating the order
 - `giveToken`: the address of the token to trade away
 - `takeToken`: the address of the token to receive
 - `giveAmount`: the amount to trade away
@@ -245,7 +246,8 @@ Submit an order to the orderbook.
 
 ```javascript
 const order = Web3Utils.soliditySha3(
-	maker,
+	exchangeAddress,
+	user,
 	giveToken,
 	giveAmount,
 	takeToken,
