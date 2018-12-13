@@ -2,9 +2,9 @@
 
 This documentation provides complete information about the API endpoints which can be used for interacting with OdinTrade's offchain orderbook.
 
-The WebSocket API is available at: https://socket.odin.trade
+The API is available at: https://api.odin.trade
 
-## Emitting events
+## Emitting socket events
 
 ### ticks
 
@@ -16,9 +16,9 @@ Emitted when a new market-related information becomes available, such as new ord
 
 ### `userAddress`, eg: 0xA39071f6...
 
-Emitted when a new user-related information becomes available, such as new deposits or withdrawals, response is similar to `getUser`.
+Emitted when a new user-related information becomes available, such as new orders, deposits or withdrawals, response is similar to `getUser`.
 
-## Listening events
+## Listening socket events
 
 ### Get all available markets
 
@@ -225,7 +225,7 @@ socket.on("0x8a37b79E54D69e833d79Cac3647C877Ef72830E1", res => {
 ### Placing limit orders
 
 ```
-createOrder { maker, giveToken, giveAmount, takeToken, takeAmount, nonce, expiry, v, r, s }
+createOrder { userAddress, giveToken, giveAmount, takeToken, takeAmount, nonce, expiry, v, r, s }
 ```
 
 Submit an order to the orderbook.
@@ -233,21 +233,21 @@ Submit an order to the orderbook.
 **Parameters:**
 
 - `exchangeAddress`: the address of the exchange's contract
-- `user`: the address of the user creating the order
+- `userAddress`: the address of the user creating the order
 - `giveToken`: the address of the token to trade away
 - `takeToken`: the address of the token to receive
 - `giveAmount`: the amount to trade away
 - `takeAmount`: the amount to receive
 - `nonce`: the current timestamp in milliseconds, a nonce should only be used once
 - `expiry`: expiry time in blocks
-- `v, r, s`: the keccak256 result of the above, signed by `maker`
+- `v, r, s`: the keccak256 result of the above, signed by `userAddress`
 
 **Example of obtaining the v, r, s for an order:**
 
 ```javascript
-const order = Web3Utils.soliditySha3(
+const hash = Web3Utils.soliditySha3(
 	exchangeAddress,
-	user,
+	userAddress,
 	giveToken,
 	giveAmount,
 	takeToken,
@@ -255,8 +255,8 @@ const order = Web3Utils.soliditySha3(
 	nonce,
 	expiry
 );
-const signedOrder = web3.eth.sign(maker, order);
-const { v, r, s } = eutil.fromRpcSig(signedOrder);
+const sig = web3.eth.sign(userAddress, order);
+const { v, r, s } = eutil.fromRpcSig(sig);
 ```
 
 **Sample request:**
@@ -279,33 +279,31 @@ socket.emit("order", {
 ### Cancelling orders
 
 ```
-cancelOrder { orderHash, user, nonce, v, r, s }
+cancelOrders { [orders], userAddress, v, r, s }
 ```
 
-Cancel an order.
+Cancel an order or multiple orders.
 
 **Parameters:**
 
-- `orderHash`: the hash of the order to cancel
-- `user`: the address of the order's owner
-- `nonce`: the current timestamp in milliseconds, a nonce should only be used once
-- `v, r, s`: the keccak256 result of `orderHash` and `nonce`, signed by `user`
+- `orders`: an array contain all of the orders, each order is an object contains an orderHash and an ID, for example: orders = [{ id: 1, orderHash: 0x4e... }, { id:2 , orderHash: 0xbd... }]
+- `userAddress`: the order's owner
+- `v, r, s`: the keccak256 result of all of the `orderHash`, signed by `userAddress`
 
 **Example of obtaining the v, r, s:**
 
 ```javascript
-const cancelMsg = Web3Utils.soliditySha3(orderHash, nonce);
-const signedCancelMsg = web3.eth.sign(user, cancelMsg);
-const { v, r, s } = eutil.fromRpcSig(signedCancelMsg);
+const hash = Web3Utils.soliditySha3(orderHash1, orderHash2, orderHash3);
+const sig = web3.eth.sign(userAddress, hash);
+const { v, r, s } = eutil.fromRpcSig(sig);
 ```
 
 **Sample request:**
 
 ```javascript
 socket.emit("cancel", {
-	orderHash,
-	user,
-	nonce,
+	orders,
+	userAddress,
 	v,
 	r,
 	s
